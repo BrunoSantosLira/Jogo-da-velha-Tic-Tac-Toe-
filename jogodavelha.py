@@ -1,4 +1,3 @@
-from distutils.command import clean
 import os
 from random import randint
 from time import sleep
@@ -16,6 +15,33 @@ Pontos_jogador=0
 
 
 #Funções
+def leiastr():
+    
+    while True:
+        a= str(input('Quer jogar outra vez? [S/N]')).upper().strip()[0]
+        if 'S' in a or 'N' in a:
+            return a   
+        else:
+            print('Digite S ou N')     
+            
+def leiaint(msg):
+    while True:
+        try:
+            while True:
+                num= int(input(msg))
+                if num in (0,1,2):
+                    return num
+                else:
+                    print('-'*20)
+                    print('Por favor, coloque apenas números de 0 a 2')
+                    print('-'*20)
+        except:
+            print('-'*20)
+            print('Por favor, coloque apenas números de 0 a 2')
+            print('-'*20)
+            continue
+            
+
 def verificar():
     if listamaq in jogadas:
         return True
@@ -23,6 +49,14 @@ def verificar():
         matriz[colunamaq][linhamaq] = str ("O")
         jogadas.append(listamaq)
         return False
+    
+def verificarjogador():
+    if listajog in jogadas:
+        return True
+    else:
+        matriz[colunajog][linhajog] = str ("X")
+        jogadas.append(listajog)
+        totjogador.append(listajog)
 
 def marcação():  
     for l in range(0,3):
@@ -70,7 +104,7 @@ def condiçãovitória():
         return True
     
     #Outra Diagonal_Maquina
-    if matriz[0][2] == 'X' and  matriz[1][1] == 'X' and matriz[2][0] == 'X':
+    if matriz[0][2] == 'O' and  matriz[1][1] == 'O' and matriz[2][0] == 'O':
         return True
     
     
@@ -95,11 +129,11 @@ class Jogador:
         self.coluna= coluna
         
     def JogarLinha(self):
-        self.linha= int(input('Linha:'))
+        self.linha= leiaint('Linha:')
         return self.linha
     
     def JogarColuna(self):
-        self.coluna= int(input('Coluna:'))
+        self.coluna= leiaint('Coluna:')
         return self.coluna
 
 
@@ -113,17 +147,24 @@ while True:
         print(Style.RESET_ALL)
                 
         #Entrada Do Jogador
-        jogador= Jogador()
-        linhajog= jogador.JogarLinha()
-        colunajog= jogador.JogarColuna()
-        print(Fore.YELLOW)
-        print('-=-'*12)
-        print(Style.RESET_ALL)
-        listajog=[linhajog,colunajog]
-        jogadas.append(listajog)
-        totjogador.append(listajog)
-        matriz[colunajog][linhajog] = str ("X")
-        turnos+=1
+        while True:
+            jogador= Jogador()
+            linhajog= jogador.JogarLinha()
+            colunajog= jogador.JogarColuna()
+            print(Fore.YELLOW)
+            print('-=-'*10)
+            print(Style.RESET_ALL)
+            listajog=[linhajog,colunajog]
+            verificação= verificarjogador()
+            if verificação == True:
+                print('-'*20)
+                print('A jogada já foi feita \nTente Novamente:')
+                print('-'*20)
+                continue
+            else:
+                turnos+=1
+                break
+        
 
         if condiçãovitória():
             print(Fore.BLUE)
@@ -165,7 +206,7 @@ while True:
      
     print(f'-Pontos do jogador: {Pontos_jogador} \n-Pontos da maquina: {Pontos_maquina}')
     print('-'*20)   
-    resposta= str(input('Quer jogar outra vez?? [S/N]')).upper().strip()
+    resposta= leiastr()
     if resposta == 'S':
         matriz= [['','',''],['','',''],['','','']]
         jogadas=[]
@@ -179,4 +220,4 @@ while True:
         print('|')
         print('|-------Obrigado por jogar! ;/-------|')
         break
-      
+    
